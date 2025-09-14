@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aurora — Go on to Aurora</title>
+  <style>
+    /* Simple, modern styling */
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#7dd3fc;--glass:rgba(255,255,255,0.04)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;background:linear-gradient(180deg,var(--bg),#071028);color:#e6eef6;min-height:100vh}
+    .wrap{max-width:1100px;margin:40px auto;padding:24px}
+    header{display:flex;gap:20px;align-items:center}
+    .hero{display:flex;flex-direction:column;gap:14px}
+    .hero__title{font-size:clamp(22px,4vw,40px);line-height:1.02;margin:0}
+    .hero__subtitle{opacity:0.85;margin:0}
+
+    /* main image */
+    .main-photo{width:100%;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(2,6,23,0.7)}
+    .main-photo img{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* gallery grid */
+    .gallery{margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .tile{background:var(--card);border-radius:10px;overflow:hidden;cursor:pointer;position:relative}
+    .tile img{width:100%;height:220px;object-fit:cover;display:block;transition:transform .35s}
+    .tile:hover img{transform:scale(1.04)}
+    .caption{position:absolute;left:10px;bottom:10px;background:var(--glass);padding:6px 10px;border-radius:999px;font-size:13px}
+
+    /* CTA */
+    .cta{margin-top:16px;display:inline-block;padding:10px 16px;border-radius:999px;background:linear-gradient(90deg,var(--accent),#60a5fa);color:#042033;text-decoration:none;font-weight:700}
+
+    /* modal/lightbox */
+    .lightbox{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.7);z-index:60}
+    .lightbox.open{display:flex}
+    .lightbox__content{max-width:95%;max-height:92%;position:relative}
+    .lightbox__content img{display:block;max-width:100%;max-height:100%;border-radius:8px}
+    .lightbox__close{position:absolute;right:-8px;top:-8px;background:#fff;border-radius:50%;width:36px;height:36px;border:none;cursor:pointer}
+    .nav-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.06);border:none;width:48px;height:48px;border-radius:8px;cursor:pointer}
+    .nav-btn.left{left:-60px}
+    .nav-btn.right{right:-60px}
+
+    @media (max-width:900px){.gallery{grid-template-columns:repeat(2,1fr)}.tile img{height:160px}}
+    @media (max-width:520px){.gallery{grid-template-columns:repeat(1,1fr)}.nav-btn.left{left:8px}.nav-btn.right{right:8px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="hero">
+        <h1 class="hero__title">Aurora Aksnes</h1>
+        <p class="hero__subtitle">This tiny website tells everyone to: "goon to Aurora"</p>
+        <a class="cta" href="#gallery">Goon to Aurora →</a>
+      </div>
+    </header>
+
+    <!-- Main image (replace the src with a real Aurora image URL or local path) -->
+    <section class="main-photo" aria-hidden="false">
+      <img id="mainImage" src="images/aurora-main.jpg" alt="Aurora portrait - replace with licensed photo">
+    </section>
+
+    <!-- Gallery of 9 pictures -->
+    <section id="gallery" class="gallery" aria-label="Aurora gallery">
+      <!-- Replace the src values below with real image URLs or local file paths. Make sure you have the right to use them. -->
+      <div class="tile" data-index="0"><img src="images/aurora1.jpg" alt="Aurora photo 1"><div class="caption">Aurora 1</div></div>
+      <div class="tile" data-index="1"><img src="images/aurora2.jpg" alt="Aurora photo 2"><div class="caption">Aurora 2</div></div>
+      <div class="tile" data-index="2"><img src="images/aurora3.jpg" alt="Aurora photo 3"><div class="caption">Aurora 3</div></div>
+      <div class="tile" data-index="3"><img src="images/aurora4.jpg" alt="Aurora photo 4"><div class="caption">Aurora 4</div></div>
+      <div class="tile" data-index="4"><img src="images/aurora5.jpg" alt="Aurora photo 5"><div class="caption">Aurora 5</div></div>
+      <div class="tile" data-index="5"><img src="images/aurora6.jpg" alt="Aurora photo 6"><div class="caption">Aurora 6</div></div>
+      <div class="tile" data-index="6"><img src="images/aurora7.jpg" alt="Aurora photo 7"><div class="caption">Aurora 7</div></div>
+      <div class="tile" data-index="7"><img src="images/aurora8.jpg" alt="Aurora photo 8"><div class="caption">Aurora 8</div></div>
+      <div class="tile" data-index="8"><img src="images/aurora9.jpg" alt="Aurora photo 9"><div class="caption">Aurora 9</div></div>
+    </section>
+  </div>
+
+  <!-- Lightbox / modal for viewing images -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true">
+    <div class="lightbox__content">
+      <button id="lbClose" class="lightbox__close" aria-label="Close">✕</button>
+      <button id="prevBtn" class="nav-btn left" aria-label="Previous">‹</button>
+      <img id="lbImg" src="" alt="Expanded Aurora photo">
+      <button id="nextBtn" class="nav-btn right" aria-label="Next">›</button>
+    </div>
+  </div>
+
+  <script>
+    // Basic gallery -> lightbox script
+    const tiles = Array.from(document.querySelectorAll('.tile'))
+    const lightbox = document.getElementById('lightbox')
+    const lbImg = document.getElementById('lbImg')
+    const lbClose = document.getElementById('lbClose')
+    const prevBtn = document.getElementById('prevBtn')
+    const nextBtn = document.getElementById('nextBtn')
+    let current = 0
+
+    function openLightbox(index){
+      const img = tiles[index].querySelector('img')
+      lbImg.src = img.src
+      lbImg.alt = img.alt
+      current = index
+      lightbox.classList.add('open')
+      document.body.style.overflow = 'hidden'
+    }
+
+    function closeLightbox(){
+      lightbox.classList.remove('open')
+      document.body.style.overflow = ''
+    }
+
+    function goto(n){
+      current = (n + tiles.length) % tiles.length
+      const img = tiles[current].querySelector('img')
+      lbImg.src = img.src
+      lbImg.alt = img.alt
+    }
+
+    tiles.forEach((t, i)=> t.addEventListener('click', ()=> openLightbox(i)))
+    lbClose.addEventListener('click', closeLightbox)
+    lightbox.addEventListener('click', (e)=>{ if(e.target===lightbox) closeLightbox() })
+    prevBtn.addEventListener('click', ()=> goto(current-1))
+    nextBtn.addEventListener('click', ()=> goto(current+1))
+
+    // keyboard navigation
+    document.addEventListener('keydown', (e)=>{
+      if(!lightbox.classList.contains('open')) return
+      if(e.key==='Escape') closeLightbox()
+      if(e.key==='ArrowLeft') goto(current-1)
+      if(e.key==='ArrowRight') goto(current+1)
+    })
+  </script>
+
+  <!-- Notes:
+       - Replace the src attributes in <img> tags with real image URLs or local paths (images/aurora1.jpg etc.).
+       - Make sure you have rights to use any photo you put here (press photos, artist's official site, or licensed stock).
+       - Save this file as "index.html" and open it in a browser to preview.
+  -->
+</body>
+</html>
