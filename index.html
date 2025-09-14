@@ -5,6 +5,22 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Aurora — Go on to Aurora</title>
   <style>
+    .hero__title {
+  font-size: clamp(28px, 5vw, 48px);
+  color: #a855f7; /* purple */
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.hero__subtitle.fancy {
+  font-family: 'Brush Script MT', cursive, 'Lucida Handwriting', sans-serif;
+  font-size: clamp(20px, 3vw, 36px);
+  text-align: center;
+  color: #f472b6; /* optional pinkish glow */
+  margin: 0 0 24px 0;
+  letter-spacing: 1px;
+}
+
     /* Simple, modern styling */
     :root{--bg:#0f1724;--card:#0b1220;--accent:#7dd3fc;--glass:rgba(255,255,255,0.04)}
     *{box-sizing:border-box}
@@ -19,12 +35,68 @@
     .main-photo{width:100%;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(2,6,23,0.7)}
     .main-photo img{width:100%;height:100%;object-fit:cover;display:block}
 
-    /* gallery grid */
-    .gallery{margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .tile{background:var(--card);border-radius:10px;overflow:hidden;cursor:pointer;position:relative}
-    .tile img{width:100%;height:220px;object-fit:cover;display:block;transition:transform .35s}
-    .tile:hover img{transform:scale(1.04)}
-    .caption{position:absolute;left:10px;bottom:10px;background:var(--glass);padding:6px 10px;border-radius:999px;font-size:13px}
+    /* Gallery grid */
+.gallery {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+/* Tile container */
+.tile {
+  background: var(--card);
+  border-radius: 10px;
+  overflow: visible; /* allow image to show full size */
+  cursor: pointer;
+  position: relative;
+}
+
+/* Tile images — show full size */
+.tile img {
+  width: 100%;       /* scale to tile width */
+  height: auto;      /* preserve aspect ratio */
+  object-fit: contain; /* no cropping */
+  display: block;
+  transition: transform 0.35s;
+}
+
+.tile:hover img {
+  transform: scale(1.04);
+}
+
+/* Caption remains the same */
+.caption {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  background: var(--glass);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+/* Worship God button */
+.worship-btn {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  padding: 10px 16px;
+  background: linear-gradient(90deg, #f472b6, #7dd3fc);
+  color: #042033;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 999px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: transform 0.25s, box-shadow 0.25s;
+  z-index: 10;
+}
+
+.worship-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+
 
     /* CTA */
     .cta{margin-top:16px;display:inline-block;padding:10px 16px;border-radius:999px;background:linear-gradient(90deg,var(--accent),#60a5fa);color:#042033;text-decoration:none;font-weight:700}
@@ -45,32 +117,80 @@
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div class="hero">
-        <h1 class="hero__title">Aurora Aksnes</h1>
-        <p class="hero__subtitle">This tiny website tells everyone to: "goon to Aurora"</p>
-        <a class="cta" href="#gallery">Goon to Aurora →</a>
-      </div>
-    </header>
+    <div class="hero">
+      <!-- Worship God button -->
+<a href="#gallery" class="worship-btn">Worship God</a>
 
-    <!-- Main image (replace the src with a real Aurora image URL or local path) -->
-    <section class="main-photo" aria-hidden="false">
-      <img id="mainImage" src="images/aurora-main.jpg" alt="Aurora portrait - replace with licensed photo">
-    </section>
+  <h1 class="hero__title">Aurora Aksnes</h1>
+  <p class="hero__subtitle fancy">Aurora is God</p>
+</div>
 
-    <!-- Gallery of 9 pictures -->
+
+   <!-- Main image -->
+<section class="main-photo" aria-hidden="false">
+  <img id="mainImage" src="photo_2025-09-08_14-59-11.jpg" alt="Aurora portrait in gallery">
+</section>
+
+<style>
+  /* Updated main photo styling */
+  .main-photo {
+    max-width: 70%; /* smaller than full width */
+    margin: 0 auto 28px auto;
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 35px rgba(124, 77, 255, 0.6), 0 0 60px rgba(0, 229, 255, 0.5);
+    background: linear-gradient(135deg, #7dd3fc, #a78bfa, #f472b6);
+    padding: 6px; /* gradient border effect */
+    animation: glowPulse 4s ease-in-out infinite alternate;
+  }
+
+  .main-photo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 14px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .main-photo:hover img {
+    transform: scale(1.05);
+  }
+
+  @keyframes glowPulse {
+    0% { box-shadow: 0 0 25px rgba(124, 77, 255, 0.5), 0 0 40px rgba(0,229,255,0.4); }
+    100% { box-shadow: 0 0 50px rgba(124, 77, 255, 0.9), 0 0 80px rgba(0,229,255,0.8); }
+  }
+
+  /* Make sure it's still bigger than gallery tiles */
+  .gallery .tile img {
+    max-height: 200px;
+  }
+  /* Sparkling animation for Worship God button */
+@keyframes sparkle {
+  0%, 100% {
+    box-shadow: 0 0 8px #f472b6, 0 0 12px #7dd3fc, 0 0 16px #facc15;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px #f472b6, 0 0 24px #7dd3fc, 0 0 30px #facc15;
+    transform: scale(1.08);
+  }
+}
+
+.worship-btn {
+  animation: sparkle 2s infinite alternate;
+}
+
+</style>
+
+
     <section id="gallery" class="gallery" aria-label="Aurora gallery">
-      <!-- Replace the src values below with real image URLs or local file paths. Make sure you have the right to use them. -->
-      <div class="tile" data-index="0"><img src="images/aurora1.jpg" alt="Aurora photo 1"><div class="caption">Aurora 1</div></div>
-      <div class="tile" data-index="1"><img src="images/aurora2.jpg" alt="Aurora photo 2"><div class="caption">Aurora 2</div></div>
-      <div class="tile" data-index="2"><img src="images/aurora3.jpg" alt="Aurora photo 3"><div class="caption">Aurora 3</div></div>
-      <div class="tile" data-index="3"><img src="images/aurora4.jpg" alt="Aurora photo 4"><div class="caption">Aurora 4</div></div>
-      <div class="tile" data-index="4"><img src="images/aurora5.jpg" alt="Aurora photo 5"><div class="caption">Aurora 5</div></div>
-      <div class="tile" data-index="5"><img src="images/aurora6.jpg" alt="Aurora photo 6"><div class="caption">Aurora 6</div></div>
-      <div class="tile" data-index="6"><img src="images/aurora7.jpg" alt="Aurora photo 7"><div class="caption">Aurora 7</div></div>
-      <div class="tile" data-index="7"><img src="images/aurora8.jpg" alt="Aurora photo 8"><div class="caption">Aurora 8</div></div>
-      <div class="tile" data-index="8"><img src="images/aurora9.jpg" alt="Aurora photo 9"><div class="caption">Aurora 9</div></div>
-    </section>
+  <!-- JS will fill this automatically -->
+</section>
+
+
   </div>
 
   <!-- Lightbox / modal for viewing images -->
@@ -134,5 +254,32 @@
        - Make sure you have rights to use any photo you put here (press photos, artist's official site, or licensed stock).
        - Save this file as "index.html" and open it in a browser to preview.
   -->
+
+  <script>
+  const gallery = document.getElementById('gallery');
+  const imageCount = 35; // total number of images you have
+  const folderPath = 'images/'; // folder where your images are
+  const filePrefix = 'aurora'; // e.g., aurora1.jpg, aurora2.jpg
+  const fileExt = '.jpg';
+
+  for(let i=1; i<=imageCount; i++){
+    const div = document.createElement('div');
+    div.className = 'tile';
+    div.dataset.index = i-1;
+
+    const img = document.createElement('img');
+    img.src = `${folderPath}${filePrefix}${i}${fileExt}`;
+    img.alt = `Aurora photo ${i}`;
+
+    const caption = document.createElement('div');
+    caption.className = 'caption';
+    caption.textContent = `Aurora ${i}`;
+
+    div.appendChild(img);
+    div.appendChild(caption);
+    gallery.appendChild(div);
+  }
+</script>
+
 </body>
 </html>
